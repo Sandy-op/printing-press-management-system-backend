@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -42,6 +43,12 @@ public class AuthController {
 	public ResponseEntity<ResponseStructure<Map<String, Object>>> login(@Valid @RequestBody LoginRequest loginRequest,
 			HttpServletRequest request) {
 		return authService.authenticateUser(loginRequest, request);
+	}
+
+	@GetMapping("/me")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<ResponseStructure<UserResponse>> getCurrentUser() {
+		return userService.getCurrentUser();
 	}
 
 	/**

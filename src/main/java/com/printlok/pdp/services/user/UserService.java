@@ -70,16 +70,20 @@ public class UserService {
 		}
 
 		User user = mapToUser(userRequest);
+
 		user.setAccountStatus(AccountStatus.IN_ACTIVE);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setEmailVerified(false);
+		user.setLastLoginAt(null);
 
+		// Set user role
 		Set<Role> roles = new HashSet<>();
 		roleRepository.findByRole(ERole.USER).ifPresentOrElse(roles::add, () -> {
 			throw new InvalidRoleException("Default USER role not found in database.");
 		});
 		user.setRoles(roles);
 
-		user = userDao.saveUser(user);
+		user = userDao.saveUser(user); 
 
 		String activation_link = linkGeneratorService.getActivationLink(user, request);
 		emailConfiguration.setSubject("Activate Your Account");
@@ -119,6 +123,7 @@ public class UserService {
 			structure.setMessage("Account is already activated.");
 		} else {
 			user.setAccountStatus(AccountStatus.ACTIVE);
+			user.setEmailVerified(true);
 			userDao.saveUser(user);
 			structure.setMessage("Account activated successfully.");
 		}
@@ -511,7 +516,8 @@ public class UserService {
 
 	private User mapToUser(UserRequest userRequest) {
 		return User.builder().email(userRequest.getEmail()).name(userRequest.getName()).phone(userRequest.getPhone())
-				.gender(userRequest.getGender()).age(userRequest.getAge()).password(userRequest.getPassword()).build();
+				.gender(userRequest.getGender()).age(userRequest.getAge()).password(userRequest.getPassword())
+				.accountStatus(AccountStatus.IN_ACTIVE).isEmailVerified(false).lastLoginAt(null).build();
 	}
 
 	private UserResponse mapToUserResponse(User user) {

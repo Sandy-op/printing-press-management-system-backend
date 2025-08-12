@@ -23,11 +23,10 @@ public class UserController {
 	private final UserService userService;
 
 	// === READ OPERATIONS ===
-
-	@GetMapping
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<ResponseStructure<List<UserResponse>>> getAllUsers() {
-		return userService.getAllUsers();
+	@GetMapping("/current")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<ResponseStructure<UserResponse>> getCurrentUser() {
+		return userService.getCurrentUser();
 	}
 
 	@GetMapping("/{id}")
@@ -36,16 +35,16 @@ public class UserController {
 		return userService.getUserById(id);
 	}
 
+	@GetMapping
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<ResponseStructure<List<UserResponse>>> getAllUsers() {
+		return userService.getAllUsers();
+	}
+
 	@GetMapping("/email/{email}")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<ResponseStructure<UserResponse>> getUserByEmail(@PathVariable String email) {
 		return userService.getUserByEmail(email);
-	}
-
-	@GetMapping("/me")
-	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<ResponseStructure<UserResponse>> getCurrentUser() {
-		return userService.getCurrentUser();
 	}
 
 	@GetMapping("/search")
@@ -88,14 +87,14 @@ public class UserController {
 
 	// === UPDATE OPERATIONS ===
 
-	@PatchMapping("/{id}")
+	@PatchMapping("/update-current/{id}")
 	@PreAuthorize("hasRole('SUPER_ADMIN') or (#id == authentication.principal.id)")
 	public ResponseEntity<ResponseStructure<UserResponse>> updateUser(@PathVariable Long id,
 			@Valid @RequestBody UserUpdateRequest updateRequest) {
 		return userService.updateUser(id, updateRequest);
 	}
 
-	@PatchMapping("/current")
+	@PatchMapping("/update-current")
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ResponseStructure<UserResponse>> updateCurrentUser(
 			@Valid @RequestBody UserUpdateRequest updateRequest) {

@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +87,10 @@ public class AuthService {
 		User user = userRepository.findByEmail(userDetails.getEmail()).orElseThrow(() -> new UsernameNotFoundException(
 				"User not found in repository despite successful authentication for email: " + userDetails.getEmail()));
 
+		// Update last login time
+		user.setLastLoginAt(Instant.now());
+		userRepository.save(user);
+
 		// Raw values
 		String rawUserAgent = loginRequest.getUserAgent() != null ? loginRequest.getUserAgent()
 				: httpRequest.getHeader("User-Agent");
@@ -104,11 +110,15 @@ public class AuthService {
 		ResponseCookie refreshCookie = createCookie("refresh", clearTextRefreshToken, jwtUtils.getRefreshTokenTtl(),
 				"/api/auth/refresh", "Strict");
 
+		// IMPROVED: Create comprehensive user data response
+		Map<String, Object> userData = createUserDataResponse(user, userDetails);
+
 		ResponseStructure<Map<String, Object>> structure = new ResponseStructure<>();
 		structure.setStatusCode(HttpStatus.OK.value());
 		structure.setMessage("Login successful");
-		structure.setData(Map.of("id", user.getId(), "name", user.getName(), "email", user.getEmail(), "roles",
-				userDetails.getAuthorities()));
+		structure.setData(Map.of("user", userData, "tokenInfo",
+				Map.of("accessExpiresIn", jwtUtils.getAccessTokenExpiryInSeconds(), "refreshExpiresIn",
+						jwtUtils.getRefreshTokenExpiryInSeconds())));
 
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, accessCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, refreshCookie.toString()).body(structure);
@@ -167,17 +177,27 @@ public class AuthService {
 
 		log.info("Refreshed token for user '{}'.", oldToken.getUser().getEmail());
 
-		Authentication authentication = createAuthenticationFromUser(oldToken.getUser());
+		// IMPROVED: Get fresh user data from database
+		User user = userRepository.findById(oldToken.getUser().getId())
+				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + oldToken.getUser().getId()));
+
+		Authentication authentication = createAuthenticationFromUser(user);
 		String newAccessToken = jwtUtils.generateAccessToken(authentication);
 
 		ResponseCookie accessCookie = createCookie("jwt", newAccessToken, jwtUtils.getAccessTokenTtl(), "/", "Strict");
 		ResponseCookie refreshCookieResp = createCookie("refresh", newClearTextToken, jwtUtils.getRefreshTokenTtl(),
 				"/api/auth/refresh", "Strict");
 
+		// IMPROVED: Include fresh user data in refresh response
+		UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+		Map<String, Object> userData = createUserDataResponse(user, userDetails);
+
 		ResponseStructure<Map<String, Object>> structure = new ResponseStructure<>();
 		structure.setStatusCode(HttpStatus.OK.value());
 		structure.setMessage("Token refreshed successfully");
-		structure.setData(Map.of("accessExpiresIn", jwtUtils.getAccessTokenExpiryInSeconds()));
+		structure.setData(Map.of("user", userData, "tokenInfo",
+				Map.of("accessExpiresIn", jwtUtils.getAccessTokenExpiryInSeconds(), "refreshExpiresIn",
+						jwtUtils.getRefreshTokenExpiryInSeconds())));
 
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, accessCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, refreshCookieResp.toString()).body(structure);
@@ -207,6 +227,21 @@ public class AuthService {
 
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, clearAccess.toString())
 				.header(HttpHeaders.SET_COOKIE, clearRefresh.toString()).body(structure);
+	}
+
+	// --- HELPER METHOD ---
+	/**
+	 * Creates a consistent user data response structure
+	 */
+	private Map<String, Object> createUserDataResponse(User user, UserDetailsImpl userDetails) {
+		// Extract role names from authorities
+		List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+				.map(role -> role.startsWith("ROLE_") ? role.substring(5) : role).collect(Collectors.toList());
+
+		return Map.of("id", user.getId(), "name", user.getName(), "email", user.getEmail(), "roles", roles,
+				"accountStatus", user.getAccountStatus(), "isEmailVerified", user.isEmailVerified(), "lastLoginAt",
+				user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null, "createdAt",
+				user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
 	}
 
 	// --- Security & Helper Methods ---
