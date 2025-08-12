@@ -1,6 +1,7 @@
 package com.printlok.pdp.models.role;
 
-import com.printlok.pdp.utils.ERole;
+import com.printlok.pdp.utils.enums.ERole;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

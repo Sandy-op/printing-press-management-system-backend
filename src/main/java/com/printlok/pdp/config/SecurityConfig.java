@@ -55,7 +55,6 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http.cors(cors -> cors.configurationSource(request -> {
 			var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-			corsConfig.setAllowedOrigins(List.of("https://localhost:3000")); // Frontend URL
 			corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 			corsConfig.setAllowedHeaders(List.of("*"));
 			corsConfig.setAllowCredentials(true);
@@ -68,8 +67,8 @@ public class SecurityConfig {
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/login", "/api/auth/signup", "/api/auth/activate",
-								"/api/auth/request-reset", "/api/auth/forgot-password")
+						.requestMatchers("/api/auth/login", "/api/auth/signup", "/api/auth/refresh",
+								"/api/auth/activate", "/api/auth/reset-password", "/api/auth/forgot-password")
 						.permitAll().anyRequest().authenticated())
 				.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class).build();
 	}

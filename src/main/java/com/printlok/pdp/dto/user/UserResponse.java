@@ -1,5 +1,9 @@
 package com.printlok.pdp.dto.user;
 
+import java.util.Set;
+
+import com.printlok.pdp.utils.enums.AccountStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-	private long id;
+	private Long id;
 	private String name;
 	private String email;
 	private String phone;
-	private int age;
 	private String gender;
+	private Integer age;
+	private Set<String> roles;
+	private AccountStatus accountStatus;
 }

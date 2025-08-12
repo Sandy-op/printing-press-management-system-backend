@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.printlok.pdp.models.user.User;
-import com.printlok.pdp.utils.OrderStatus;
+import com.printlok.pdp.utils.enums.OrderStatus;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

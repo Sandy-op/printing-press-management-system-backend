@@ -1,4 +1,4 @@
-package com.printlok.pdp.utils;
+package com.printlok.pdp.utils.enums;
 
 public enum OrderStatus {
 

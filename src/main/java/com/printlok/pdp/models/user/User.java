@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.printlok.pdp.models.role.Role;
-import com.printlok.pdp.utils.AccountStatus;
+import com.printlok.pdp.utils.enums.AccountStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

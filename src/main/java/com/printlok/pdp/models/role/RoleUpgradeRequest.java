@@ -3,7 +3,7 @@ package com.printlok.pdp.models.role;
 import java.time.LocalDateTime;
 
 import com.printlok.pdp.models.user.User;
-import com.printlok.pdp.utils.RequestStatus;
+import com.printlok.pdp.utils.enums.RequestStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoleUpgradeRequest {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -33,11 +34,14 @@ public class RoleUpgradeRequest {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String companyName;
 
 	@Column(nullable = false, unique = true)
 	private String gstNumber;
+
+	@Column(nullable = false, length = 500)
+	private String customNote;
 
 	@Column(nullable = false)
 	private LocalDateTime requestDate;

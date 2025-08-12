@@ -10,10 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoleUpgradeRequest {
+
 	@NotBlank(message = "Company name is mandatory")
 	private String companyName;
 
 	@NotBlank(message = "Gst Number is mandatory")
-	@Size(min = 15, max = 15, message = "GST No. must be 15 digit")
+	@Size(min = 15, max = 15, message = "GST No. must be 15 digits")
 	private String gstNumber;
+
+	@NotBlank(message = "Custom note is mandatory")
+	@Size(max = 500, message = "Custom note must be less than 500 characters")
+	private String customNote;
 }

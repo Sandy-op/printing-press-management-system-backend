@@ -21,8 +21,8 @@ import com.printlok.pdp.repositories.user.UserRepository;
 import com.printlok.pdp.security.JwtUtils;
 import com.printlok.pdp.services.email.EmailService;
 import com.printlok.pdp.services.email.LinkGeneratorService;
-import com.printlok.pdp.utils.ERole;
-import com.printlok.pdp.utils.RequestStatus;
+import com.printlok.pdp.utils.enums.ERole;
+import com.printlok.pdp.utils.enums.RequestStatus;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,6 +55,7 @@ public class RoleUpgradeRequestService {
 		request.setUser(user);
 		request.setCompanyName(dto.getCompanyName());
 		request.setGstNumber(dto.getGstNumber());
+		request.setCustomNote(dto.getCustomNote()); // NEW LINE
 		request.setRequestDate(LocalDateTime.now());
 		request.setStatus(RequestStatus.UNCONFIRMED);
 
@@ -243,14 +244,16 @@ public class RoleUpgradeRequestService {
 	}
 
 	// Mapping method
-	private RoleUpgradeResponse mapToResponse(RoleUpgradeRequest req) {
-		RoleUpgradeResponse res = new RoleUpgradeResponse();
-		res.setRequestId(req.getId());
-		res.setCompanyName(req.getCompanyName());
-		res.setGstNumber(req.getGstNumber());
-		res.setUserEmail(req.getUser().getEmail());
-		res.setStatus(req.getStatus());
-		res.setRequestDate(req.getRequestDate());
-		return res;
+	private RoleUpgradeResponse mapToResponse(RoleUpgradeRequest request) {
+		RoleUpgradeResponse response = new RoleUpgradeResponse();
+		response.setRequestId(request.getId());
+		response.setCompanyName(request.getCompanyName());
+		response.setGstNumber(request.getGstNumber());
+		response.setUserEmail(request.getUser().getEmail());
+		response.setCustomNote(request.getCustomNote()); // NEW LINE
+		response.setStatus(request.getStatus());
+		response.setRequestDate(request.getRequestDate());
+		return response;
 	}
+
 }

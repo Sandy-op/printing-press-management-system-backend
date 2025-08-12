@@ -25,8 +25,8 @@ import com.printlok.pdp.repositories.catalog.ProductRepository;
 import com.printlok.pdp.repositories.order.OrderRepository;
 import com.printlok.pdp.repositories.user.UserRepository;
 import com.printlok.pdp.services.user.UserDetailsImpl;
-import com.printlok.pdp.utils.ERole;
-import com.printlok.pdp.utils.OrderStatus;
+import com.printlok.pdp.utils.enums.ERole;
+import com.printlok.pdp.utils.enums.OrderStatus;
 
 import lombok.RequiredArgsConstructor;
 

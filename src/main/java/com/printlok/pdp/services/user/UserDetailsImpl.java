@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.printlok.pdp.models.user.User;
-import com.printlok.pdp.utils.AccountStatus;
+import com.printlok.pdp.utils.enums.AccountStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

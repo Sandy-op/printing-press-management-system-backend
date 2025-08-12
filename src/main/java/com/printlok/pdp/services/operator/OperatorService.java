@@ -12,7 +12,7 @@ import com.printlok.pdp.dto.ResponseStructure;
 import com.printlok.pdp.dto.user.UserResponse;
 import com.printlok.pdp.models.user.User;
 import com.printlok.pdp.repositories.user.UserRepository;
-import com.printlok.pdp.utils.ERole;
+import com.printlok.pdp.utils.enums.ERole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,7 @@ public class OperatorService {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ResponseStructure<List<UserResponse>>> getAllOperators() {
-		List<User> operators = userRepository.findByRoles_Role(ERole.OPERATOR);
+		List<User> operators = userRepository.findByRole(ERole.OPERATOR);
 
 		List<UserResponse> responseList = operators.stream().map(this::mapToUserResponse).collect(Collectors.toList());
 

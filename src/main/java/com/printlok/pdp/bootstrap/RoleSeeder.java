@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.printlok.pdp.models.role.Role;
 import com.printlok.pdp.repositories.role.RoleRepository;
-import com.printlok.pdp.utils.ERole;
+import com.printlok.pdp.utils.enums.ERole;
 
 @Component
 public class RoleSeeder implements CommandLineRunner {
