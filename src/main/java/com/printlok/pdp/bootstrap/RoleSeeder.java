@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.printlok.pdp.models.role.Role;
-import com.printlok.pdp.repositories.role.RoleRepository;
-import com.printlok.pdp.utils.enums.ERole;
+import com.printlok.pdp.common.enums.ERole;
+import com.printlok.pdp.role.models.Role;
+import com.printlok.pdp.role.repositories.RoleRepository;
 
 @Component
 public class RoleSeeder implements CommandLineRunner {

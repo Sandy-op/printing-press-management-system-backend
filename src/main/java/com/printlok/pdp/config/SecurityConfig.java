@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.printlok.pdp.security.AuthTokenFilter;
 import com.printlok.pdp.security.JwtUtils;
-import com.printlok.pdp.services.user.UserServiceImpl;
+import com.printlok.pdp.user.UserServiceImpl;
 import com.printlok.pdp.security.AuthEntryPointJwt;
 
 @Configuration

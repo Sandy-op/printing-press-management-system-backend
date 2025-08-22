@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.printlok.pdp.services.user.UserServiceImpl;
+import com.printlok.pdp.user.UserServiceImpl;
 
 import java.io.IOException;
 

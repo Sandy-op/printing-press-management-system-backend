@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import com.printlok.pdp.dto.ResponseStructure;
+import com.printlok.pdp.common.dto.ResponseStructure;
 
 import lombok.extern.slf4j.Slf4j;
 
